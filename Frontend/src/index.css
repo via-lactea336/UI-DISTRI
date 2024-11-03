@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #1dbf73;
+  --color-primary-dark: #19a463;
+  --color-secondary: #404145;
+  --color-text: #62646a;
+  --color-light: #f7f7f7;
+}
+
+body {
+  font-family: "Macan", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--color-secondary);
+}
+
+.btn-primary {
+  @apply bg-[var(--color-primary)] text-white font-semibold py-2 px-4 rounded hover:bg-[var(--color-primary-dark)] transition-colors;
+}
+
+.user-profile {
+  @apply bg-[var(--color-primary)] text-white font-semibold py-2 px-2 rounded-full hover:bg-[var(--color-primary-dark)] transition-colors;
+}
+
+.btn-outline {
+  @apply border border-[var(--color-secondary)] text-[var(--color-secondary)] font-semibold py-2 px-4 rounded hover:bg-[var(--color-light)] transition-colors;
+}
