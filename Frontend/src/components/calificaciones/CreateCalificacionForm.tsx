@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCalificaciones } from "../../hooks/useCalificaciones";
 import { PublicacionConCalificacion } from "../../types";
 import { Star } from "lucide-react";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
 
 type Props = {
   publicacion: PublicacionConCalificacion;
@@ -9,8 +10,9 @@ type Props = {
 
 const CreateCalificacionForm = ({ publicacion }: Props) => {
   const { createCalificacionDetalle } = useCalificaciones();
+  const { userResponseDTO } = useAuth();
   const [formData, setFormData] = useState({
-    clienteId: 1,
+    clienteId: userResponseDTO.idClienteTrabajador,
     calificacion: 0,
     comentario: "",
     publicacionId: publicacion.publicacionId,

@@ -1,21 +1,46 @@
 import { Star, MessageSquare } from "lucide-react";
-import { CalificacionDetalle } from "../../types";
+import { CalificacionDetalle, CalificacionDetalleWithUser } from "../../types";
 import { missingImage } from "../../constants";
+import { useEffect, useState } from "react";
+import { clientesService } from "../../services/clientes.service";
 
 interface ServiceCommentsProps {
   detalles: CalificacionDetalle[];
 }
 
 const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
+  const [detallesWithClientName, setDetallesWithClientName] = useState<
+    CalificacionDetalleWithUser[]
+  >([]);
+
+  useEffect(() => {
+    const fetchClientNames = async () => {
+      const detallesWithClientName = await Promise.all(
+        detalles.map(async (detalle) => {
+          const response = await clientesService.getUserByClienteId(
+            detalle.clienteId
+          );
+          return {
+            ...detalle,
+            usuario: response,
+          };
+        })
+      );
+      setDetallesWithClientName(detallesWithClientName);
+    };
+
+    fetchClientNames();
+  }, [detalles]);
+
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl mt-8">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
         <MessageSquare className="w-6 h-6 text-[var(--primary)]" />
         Comentarios y Valoraciones
       </h2>
 
       <div className="space-y-6">
-        {detalles?.map((detalle, index) => (
+        {detallesWithClientName?.map((detalle, index) => (
           <div
             key={index}
             className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 overflow-hidden"
@@ -24,7 +49,7 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                   <img
-                    src={missingImage}
+                    src={detalle.usuario.imgPerfil || missingImage}
                     alt="Avatar"
                     className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
                   />
@@ -60,7 +85,7 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
               <div className="mt-4 border-t border-gray-50 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <span className="hover:text-blue-600 transition-colors duration-200">
-                    Bryan Q.
+                    {detalle.usuario.nombre}
                   </span>
                 </div>
               </div>

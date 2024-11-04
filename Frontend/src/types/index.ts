@@ -47,6 +47,10 @@ export interface CalificacionDetalle {
   comentario: string;
 }
 
+export interface CalificacionDetalleWithUser extends CalificacionDetalle {
+  usuario: UserResponseDTO;
+}
+
 export interface Categoria {
   categoriaId: number;
   nombreCategoria: string;
@@ -75,6 +79,14 @@ export interface User extends RegisterData {
 
 export interface UserToken {
   token: string | null;
+}
+
+export interface UserResponseDTO extends Omit<User, "contrasena">, UserToken {
+  usuarioId: number;
+  createdAt: string;
+  updatedAt: string | null;
+  tipoUsuario: string;
+  idClienteTrabajador: number;
 }
 
 export interface LoginCredentials {
