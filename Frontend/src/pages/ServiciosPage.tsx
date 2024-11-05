@@ -4,7 +4,7 @@ import NoResults from "../components/NoResults";
 import usePublicaciones from "../hooks/usePublicaciones";
 import useDebounce from "../hooks/useDebounce";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Pagination from "../components/Pagination"; // Import the Pagination component
+import Pagination from "../components/Pagination";
 
 const Skeleton = () => (
   <div className="bg-white rounded-lg shadow-md overflow-hidden p-6 animate-pulse">

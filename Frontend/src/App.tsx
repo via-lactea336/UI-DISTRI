@@ -19,6 +19,7 @@ import Error500Page from "./pages/Error500Page";
 import { useAuth } from "./context/AuthContext";
 import { configureInterceptor } from "./services/api";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
+import CreatePublication from "./pages/CrearPublicacionPage";
 
 const InterceptorSetup = () => {
   const { logout, setSessionExpired } = useAuth();
@@ -52,6 +53,7 @@ function App() {
             <Route path="/propuestas" element={<ProtectedRoute />}>
               <Route path="" element={<PropuestasPage />} />
             </Route>
+            <Route path="/publicacion/create" element={<CreatePublication />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/500" element={<Error500Page />} />
