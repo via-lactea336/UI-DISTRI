@@ -45,9 +45,12 @@ export const useCalificaciones = () => {
       const response = await calificacionesService.createDetalle(data);
       toast.success("Calificación creada exitosamente");
       setCalificaciones((prev) => {
-        const calificacion = prev?.find(
-          (calificacion) => calificacion.calificacionId === data.calificacionId
-        );
+        const calificacion = Array.isArray(prev)
+          ? prev.find(
+              (calificacion) =>
+                calificacion.calificacionId === data.calificacionId
+            )
+          : null;
         if (calificacion) {
           calificacion.detalles.push(response);
         }

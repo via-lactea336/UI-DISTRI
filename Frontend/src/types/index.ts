@@ -75,6 +75,7 @@ export interface RegisterData {
 export interface User extends RegisterData {
   activo: boolean;
   rolId: string;
+  tipoUsuario: "cliente" | "trabajador";
 }
 
 export interface UserToken {
@@ -85,7 +86,6 @@ export interface UserResponseDTO extends Omit<User, "contrasena">, UserToken {
   usuarioId: number;
   createdAt: string;
   updatedAt: string | null;
-  tipoUsuario: string;
   idClienteTrabajador: number;
 }
 
@@ -131,3 +131,7 @@ export interface TipoDePrecio {
 export interface PublicacionConCalificacion extends Publicacion {
   calificacion: Calificacion;
 }
+
+export type Event = React.ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>;

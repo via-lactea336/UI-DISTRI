@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     createdAt: "",
     updatedAt: null,
     token: "",
-    tipoUsuario: "",
+    tipoUsuario: "cliente" as "cliente" | "trabajador",
     idClienteTrabajador: 0,
   };
 

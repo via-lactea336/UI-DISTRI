@@ -1,4 +1,4 @@
-import { LoginCredentials, RegisterData, UserResponseDTO } from "../types";
+import { LoginCredentials, User, UserResponseDTO } from "../types";
 import api from "./api";
 
 export const authService = {
@@ -10,7 +10,7 @@ export const authService = {
     return response.data as UserResponseDTO;
   },
 
-  async register(data: RegisterData) {
+  async register(data: User) {
     const response = await api.post("/auth/register", data);
     return response.status;
   },

@@ -10,7 +10,9 @@ type Props = {
 
 const CreateCalificacionForm = ({ publicacion }: Props) => {
   const { createCalificacionDetalle } = useCalificaciones();
+  const [loading, setLoading] = useState(false);
   const { userResponseDTO } = useAuth();
+  console.log(userResponseDTO);
   const [formData, setFormData] = useState({
     clienteId: userResponseDTO.idClienteTrabajador,
     calificacion: 0,
@@ -31,6 +33,7 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await createCalificacionDetalle(formData);
       // Reset form
@@ -41,6 +44,8 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
       });
     } catch (error) {
       console.error("Error creating calificacion:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,7 +104,7 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
         type="submit"
         className="w-full py-2 mt-4 px-4 bg-[var(--color-primary)] text-white font-semibold rounded-md shadow-sm hover:[var(--color-secondary)]focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
       >
-        Enviar calificación
+        {loading ? "Enviando..." : "Enviar calificación"}
       </button>
     </form>
   );

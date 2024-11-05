@@ -23,15 +23,16 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
         <div className="flex flex-col w-2/4">
           <div className="">
             <h1 className="text-3xl font-semibold text-neutral-800">
-              {uniquePublicacion.titulo}
+              {uniquePublicacion.titulo} -{" "}
+              <span className="text-2xl font-semibold text-neutral-800">
+                {uniquePublicacion.trabajadorId}
+              </span>
             </h1>
+
             <div className="flex items-center mb-4 gap-2 py-2">
               <Star className="text-yellow-400 mr-1" size={24} />
               <span className="text-lg font-medium">
                 {uniquePublicacion.calificacion.calificacionGeneral.toFixed(2)}
-              </span>
-              <span className="text-neutral-500">
-                ({uniquePublicacion.calificacion.calificacionGeneral} reviews)
               </span>
             </div>
             <h2 className="text-2xl font-bold mb-4">Sobre el servicio</h2>

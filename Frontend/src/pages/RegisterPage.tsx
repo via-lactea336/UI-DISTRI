@@ -7,6 +7,7 @@ import Step1 from "../components/register/Step1";
 import Step2 from "../components/register/Step2";
 import Step3 from "../components/register/Step3";
 import ProgressIndicator from "../components/register/ProgressIndicator";
+import { Event } from "../types";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,21 +21,29 @@ const RegisterPage: React.FC = () => {
     direccion: "",
     bio: "",
     imgPerfil: "",
+    tipoUsuario: "cliente" as "cliente" | "trabajador",
   });
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e: Event) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e:
+      | React.FormEvent
+      | React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+  ) => {
     e.preventDefault();
     if (formData.contrasena !== formData.confirmPassword) {
       toast.error("Las contraseñas no coinciden");
       return;
     }
+    setLoading(true);
     try {
       await register({
         nombre: formData.nombre,
@@ -46,10 +55,13 @@ const RegisterPage: React.FC = () => {
         imgPerfil: formData.imgPerfil,
         activo: true,
         rolId: "1",
+        tipoUsuario: formData.tipoUsuario,
       });
       navigate("/login");
     } catch (error) {
       console.error("Error during registration:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,8 +133,8 @@ const RegisterPage: React.FC = () => {
                 Siguiente
               </a>
             ) : (
-              <button type="submit" className="btn-primary">
-                Crear Cuenta
+              <button type="submit" className="btn-primary" disabled={loading}>
+                {loading ? "Creando..." : "Crear Cuenta"}
               </button>
             )}
           </div>
