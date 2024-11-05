@@ -132,6 +132,10 @@ export interface PublicacionConCalificacion extends Publicacion {
   calificacion: Calificacion;
 }
 
+export interface PublicacionConUsuario extends PublicacionConCalificacion {
+  user: UserResponseDTO;
+}
+
 export type Event = React.ChangeEvent<
   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 >;

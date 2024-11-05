@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useCalificaciones } from "../../hooks/useCalificaciones";
-import { PublicacionConCalificacion } from "../../types";
+import { CalificacionDetalle, PublicacionConUsuario } from "../../types";
 import { Star } from "lucide-react";
 import { useAuth } from "../../context/AuthContext"; // Import useAuth
 
 type Props = {
-  publicacion: PublicacionConCalificacion;
+  publicacion: PublicacionConUsuario;
+  onNewCalificacion: (newDetalle: CalificacionDetalle) => void;
 };
 
-const CreateCalificacionForm = ({ publicacion }: Props) => {
+const CreateCalificacionForm = ({ publicacion, onNewCalificacion }: Props) => {
   const { createCalificacionDetalle } = useCalificaciones();
   const [loading, setLoading] = useState(false);
   const { userResponseDTO } = useAuth();
@@ -35,7 +36,8 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await createCalificacionDetalle(formData);
+      const newDetalle = await createCalificacionDetalle(formData);
+      onNewCalificacion(newDetalle);
       // Reset form
       setFormData({
         ...formData,
@@ -50,19 +52,16 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-1/3 p-6 bg-white rounded-lg shadow-md"
-    >
-      <h2 className="text-2xl font-bold mb-4">Califica tu experiencia</h2>
+    <form onSubmit={handleSubmit} className="p-6">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
+        Califica tu experiencia
+      </h2>
       <div className="space-y-4">
         <div>
           <label
             htmlFor={`calificacion`}
             className="block mb-2 text-sm font-medium"
-          >
-            Calificación
-          </label>
+          ></label>
           <div className="flex justify-start space-x-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -85,15 +84,13 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
           <label
             htmlFor={`comentario`}
             className="block mb-2 text-sm font-medium"
-          >
-            Comentario
-          </label>
+          ></label>
           <textarea
             id={`comentario`}
             name="comentario"
             value={formData.comentario}
             onChange={(e) => handleDetalleChange(e)}
-            className="mt-1 p-4 block w-full rounded-md border-gray-800 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]sm:text-sm"
+            className="mt-1 p-4 block w-full rounded-lg border-2 border-gray-200 focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] sm:text-sm"
             rows={4}
             placeholder="Cuéntanos más sobre tu experiencia..."
           />
@@ -102,7 +99,7 @@ const CreateCalificacionForm = ({ publicacion }: Props) => {
 
       <button
         type="submit"
-        className="w-full py-2 mt-4 px-4 bg-[var(--color-primary)] text-white font-semibold rounded-md shadow-sm hover:[var(--color-secondary)]focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+        className="py-2 mt-4 px-4 bg-gray-900 text-white font-semibold rounded-md shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2  focus:ring-offset-2"
       >
         {loading ? "Enviando..." : "Enviar calificación"}
       </button>

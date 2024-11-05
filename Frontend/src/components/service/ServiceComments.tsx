@@ -1,8 +1,11 @@
-import { Star, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react"; // Import MessageSquare icon
 import { CalificacionDetalle, CalificacionDetalleWithUser } from "../../types";
-import { missingImage } from "../../constants";
 import { useEffect, useState } from "react";
 import { clientesService } from "../../services/clientes.service";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
+import { calificacionesService } from "../../services/calificaciones.service"; // Import calificacionesService
+import toast from "react-hot-toast";
+import CommentCard from "./CommentCard";
 
 interface ServiceCommentsProps {
   detalles: CalificacionDetalle[];
@@ -12,6 +15,7 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
   const [detallesWithClientName, setDetallesWithClientName] = useState<
     CalificacionDetalleWithUser[]
   >([]);
+  const { userResponseDTO } = useAuth();
 
   useEffect(() => {
     const fetchClientNames = async () => {
@@ -32,8 +36,53 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
     fetchClientNames();
   }, [detalles]);
 
+  const handleSave = async (
+    detalle: CalificacionDetalleWithUser,
+    editedComentario: string,
+    editedCalificacion: number
+  ) => {
+    try {
+      const updatedDetalle = await calificacionesService.updateDetalle(
+        detalle.calificacionDetalleId,
+        {
+          ...detalle,
+          comentario: editedComentario,
+          calificacion: editedCalificacion,
+        }
+      );
+      setDetallesWithClientName((prevDetalles) =>
+        prevDetalles.map((d) =>
+          d.calificacionDetalleId === updatedDetalle.calificacionDetalleId
+            ? {
+                ...d,
+                comentario: editedComentario,
+                calificacion: editedCalificacion,
+              }
+            : d
+        )
+      );
+      toast.success("Comentario actualizado");
+    } catch (error) {
+      console.error("Error updating detalle:", error);
+      toast.error("Error actualizando comentario");
+    }
+  };
+
+  const handleDelete = async (detalleId: number) => {
+    try {
+      await calificacionesService.deleteDetalle(detalleId);
+      setDetallesWithClientName((prevDetalles) =>
+        prevDetalles.filter((d) => d.calificacionDetalleId !== detalleId)
+      );
+      toast.success("Comentario eliminado");
+    } catch (error) {
+      console.error("Error deleting detalle:", error);
+      toast.error("Error eliminando comentario");
+    }
+  };
+
   return (
-    <div className="max-w-3xl mt-8">
+    <div className="max-w-3xl mt-8 p-6">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
         <MessageSquare className="w-6 h-6 text-[var(--primary)]" />
         Comentarios y Valoraciones
@@ -41,56 +90,13 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
 
       <div className="space-y-6">
         {detallesWithClientName?.map((detalle, index) => (
-          <div
+          <CommentCard
             key={index}
-            className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 overflow-hidden"
-          >
-            <div className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <img
-                    src={detalle.usuario.imgPerfil || missingImage}
-                    alt="Avatar"
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
-                  />
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < detalle.calificacion
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-200"
-                          }`}
-                        />
-                      ))}
-                      <span className="text-sm font-medium text-gray-600 ml-1">
-                        ({detalle.calificacion}/5)
-                      </span>
-                    </div>
-                    <time className="text-sm text-gray-500">
-                      {detalle.fecha}
-                    </time>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="text-gray-700 leading-relaxed">
-                  {detalle.comentario}
-                </p>
-              </div>
-
-              <div className="mt-4 border-t border-gray-50 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span className="hover:text-blue-600 transition-colors duration-200">
-                    {detalle.usuario.nombre}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+            detalle={detalle}
+            userResponseDTO={userResponseDTO}
+            onSave={handleSave}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
     </div>

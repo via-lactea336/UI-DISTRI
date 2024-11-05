@@ -44,18 +44,7 @@ export const useCalificaciones = () => {
     try {
       const response = await calificacionesService.createDetalle(data);
       toast.success("Calificación creada exitosamente");
-      setCalificaciones((prev) => {
-        const calificacion = Array.isArray(prev)
-          ? prev.find(
-              (calificacion) =>
-                calificacion.calificacionId === data.calificacionId
-            )
-          : null;
-        if (calificacion) {
-          calificacion.detalles.push(response);
-        }
-        return prev;
-      });
+
       return response;
     } catch (err) {
       toast.error("Error al crear el detalle de la calificación");

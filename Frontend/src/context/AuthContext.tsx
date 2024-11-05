@@ -49,11 +49,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
+      const savedUserResponseDTO = localStorage.getItem("userResponseDTO");
       if (token) {
         const isValid = await authService.validateToken();
         setIsAuth(isValid);
         if (isValid) {
           setUserToken({ token });
+          if (savedUserResponseDTO) {
+            setUserResponseDTO(JSON.parse(savedUserResponseDTO));
+          }
         }
       }
       setLoading(false);
