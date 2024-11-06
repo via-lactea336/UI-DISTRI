@@ -10,20 +10,20 @@ interface Activity {
 }
 
 export default function EventCreator() {
-    const [eventTitle, setEventTitle] = useState('')
-    const [eventDescription, setEventDescription] = useState('')
-    const [eventDate, setEventDate] = useState('')
-    const [eventTime, setEventTime] = useState('')
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventDate, setEventDate] = useState('');
+    const [eventTime, setEventTime] = useState('');
 
-    const [activities, setActivities] = useState<Activity[]>([])
-    const [activityTitle, setActivityTitle] = useState('')
-    const [activityDescription, setActivityDescription] = useState('')
-    const [activityPersonLimit, setActivityPersonLimit] = useState('')
+    const [activities, setActivities] = useState<Activity[]>([]);
+    const [activityTitle, setActivityTitle] = useState('');
+    const [activityDescription, setActivityDescription] = useState('');
+    const [activityPersonLimit, setActivityPersonLimit] = useState('');
     const [editingActivityId, setEditingActivityId] = useState<number | null>(null)
 
     const handleSubmitEvent = (e: React.FormEvent) => {
         e.preventDefault()
-        
+
         console.log('Evento creado:', { eventTitle, eventDescription, eventDate, eventTime, activities })
     }
 
