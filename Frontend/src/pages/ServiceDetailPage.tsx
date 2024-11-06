@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import usePublicaciones from "../hooks/usePublicaciones";
 import ServiceComments from "../components/service/ServiceComments";
 import ServiceDetails from "../components/service/ServiceDetails";
@@ -6,12 +6,13 @@ import CreateCalificacionForm from "../components/calificaciones/CreateCalificac
 import { CalificacionDetalle } from "../types";
 import SkeletonLayout from "../components/SkeletonLayout";
 import Error404Page from "./Error404Page";
+import Pagination from "../components/Pagination";
 
 const ServiceDetailPage: React.FC = () => {
-  const { uniquePublicacion, setUniquePublicacion, loading } = usePublicaciones(
-    "",
-    0
-  );
+  const { uniquePublicacion, setUniquePublicacion, loading, getComentarios } =
+    usePublicaciones("", 0);
+
+  const [commentLoading, setCommentLoading] = useState(false);
 
   if (loading) {
     return <SkeletonLayout />;
@@ -26,9 +27,34 @@ const ServiceDetailPage: React.FC = () => {
       ...uniquePublicacion,
       calificacion: {
         ...uniquePublicacion.calificacion,
-        detalles: [newDetalle, ...uniquePublicacion.calificacion.detalles],
+        detallesPaginados: {
+          ...uniquePublicacion.calificacion.detallesPaginados,
+          content: [
+            newDetalle,
+            ...uniquePublicacion.calificacion.detallesPaginados.content,
+          ],
+        },
       },
     });
+  };
+
+  const handlePageChange = async (page: number) => {
+    try {
+      setCommentLoading(true);
+      const { calificacion } = await getComentarios(
+        uniquePublicacion.publicacionId,
+        uniquePublicacion.trabajadorId,
+        page
+      );
+      setUniquePublicacion({
+        ...uniquePublicacion,
+        calificacion,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCommentLoading(false);
+    }
   };
 
   return (
@@ -38,8 +64,15 @@ const ServiceDetailPage: React.FC = () => {
         publicacion={uniquePublicacion}
         onNewCalificacion={onNewCalificacion}
       />
-
-      <ServiceComments detalles={uniquePublicacion.calificacion.detalles} />
+      <ServiceComments
+        detallesPaginados={uniquePublicacion.calificacion.detallesPaginados}
+        commentLoading={commentLoading}
+      />
+      <Pagination
+        totalPages={uniquePublicacion.calificacion.detallesPaginados.totalPages}
+        currentPage={uniquePublicacion.calificacion.detallesPaginados.number}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
-import { Star, Edit2, Save, X, Trash2, Loader } from "lucide-react"; // Import icons
+import { Star, Edit2, Save, X, Trash2, Loader } from "lucide-react";
 import { CalificacionDetalleWithUser, UserResponseDTO } from "../../types";
-import { useState } from "react";
 import { missingImage } from "../../constants";
+import ConfirmationDialog from "../common/ConfirmationDialog";
+import useCommentCard from "../../hooks/useCommentCard";
 
 interface CommentCardProps {
   detalle: CalificacionDetalleWithUser;
@@ -20,35 +21,20 @@ const CommentCard: React.FC<CommentCardProps> = ({
   onSave,
   onDelete,
 }) => {
-  const [editingDetalleId, setEditingDetalleId] = useState<number | null>(null);
-  const [editedComentario, setEditedComentario] = useState<string>("");
-  const [editedCalificacion, setEditedCalificacion] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleEdit = () => {
-    setEditingDetalleId(detalle.calificacionDetalleId);
-    setEditedComentario(detalle.comentario);
-    setEditedCalificacion(detalle.calificacion);
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    await onSave(detalle, editedComentario, editedCalificacion);
-    setEditingDetalleId(null);
-    setLoading(false);
-  };
-
-  const handleCancel = () => {
-    setEditingDetalleId(null);
-    setEditedComentario("");
-    setEditedCalificacion(0);
-  };
-
-  const handleDelete = async () => {
-    setLoading(true);
-    await onDelete(detalle.calificacionDetalleId);
-    setLoading(false);
-  };
+  const {
+    editingDetalleId,
+    editedComentario,
+    editedCalificacion,
+    loading,
+    showConfirmDialog,
+    handleEdit,
+    handleSave,
+    handleCancel,
+    handleDelete,
+    setShowConfirmDialog,
+    setEditedCalificacion,
+    setEditedComentario,
+  } = useCommentCard(detalle, onSave, onDelete);
 
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 overflow-hidden">
@@ -130,7 +116,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
                     <button
                       type="button"
                       className="text-gray-500 hover:text-gray-700"
-                      onClick={handleDelete}
+                      onClick={() => setShowConfirmDialog(true)}
                       disabled={loading}
                     >
                       {loading ? (
@@ -166,6 +152,12 @@ const CommentCard: React.FC<CommentCardProps> = ({
           </div>
         </div>
       </div>
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        onConfirm={handleDelete}
+        onCancel={() => setShowConfirmDialog(false)}
+        message="¿Seguro que quieres eliminar este comentario?"
+      />
     </div>
   );
 };
