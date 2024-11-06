@@ -52,7 +52,12 @@ const Header: React.FC = () => {
           >
             Propuestas
           </Link>
-          <button className="btn-outline">Ofrecer un servicio</button>
+          <button
+            className="btn-outline"
+            onClick={() => window.location.href = '/publicacion/create'}>
+            Ofrecer un servicio
+          </button>
+
 
           {isAuth ? (
             <ProfileMenu onLogout={handleLogout} />
