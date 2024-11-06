@@ -147,3 +147,31 @@ export type CalificacionGeneralCreate = {
   publicacionId: number;
   calificacionGeneral: number;
 };
+
+export interface ActividadesDTO {
+  actividadId: number;
+  eventoId: number;
+  nombre: string;
+  descripcion: string;
+}
+
+export interface ActividadCreate {
+  eventoId: number;
+  nombre: string;
+  descripcion: string;
+}
+
+export interface EventoDTO {
+  eventoId: number;
+  trabajadorId: number;
+  nombreEvento: string;
+  fecha: string;
+  lugar: string;
+}
+
+export interface EventoCreate {
+  trabajadorId: number;
+  nombreEvento: string;
+  fecha: string;
+  lugar: string;
+}
