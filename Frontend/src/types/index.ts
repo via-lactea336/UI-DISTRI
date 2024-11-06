@@ -142,3 +142,8 @@ export interface PublicacionConUsuario extends PublicacionConCalificacion {
 export type Event = React.ChangeEvent<
   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 >;
+
+export type CalificacionGeneralCreate = {
+  publicacionId: number;
+  calificacionGeneral: number;
+};
