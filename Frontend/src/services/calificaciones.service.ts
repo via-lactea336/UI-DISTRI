@@ -1,5 +1,9 @@
 import api from "./api";
-import type { Calificacion, CalificacionDetalle } from "../types";
+import type {
+  Calificacion,
+  CalificacionDetalle,
+  CalificacionGeneralCreate,
+} from "../types";
 
 export const calificacionesService = {
   async getCalificaciones() {
@@ -19,7 +23,7 @@ export const calificacionesService = {
     return response.data;
   },
 
-  async createCalificacion(data: Omit<Calificacion, "calificacionId">) {
+  async createCalificacion(data: CalificacionGeneralCreate) {
     const response = await api.post<Calificacion>("/calificaciones", data);
     return response.data;
   },
