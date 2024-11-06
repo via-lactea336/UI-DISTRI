@@ -12,9 +12,9 @@ export const calificacionesService = {
     return response.data;
   },
 
-  async getCalificacionByPublicacionId(publicacionId: number) {
+  async getCalificacionByPublicacionId(publicacionId: number, page = 0) {
     const response = await api.get<Calificacion>(
-      `/calificaciones/publicacion/${publicacionId}`
+      `/calificaciones/publicacion/${publicacionId}?page=${page}&size=3`
     );
     return response.data;
   },

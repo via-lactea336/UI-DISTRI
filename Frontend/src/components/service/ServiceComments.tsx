@@ -1,21 +1,31 @@
 import { MessageSquare } from "lucide-react"; // Import MessageSquare icon
-import { CalificacionDetalle, CalificacionDetalleWithUser } from "../../types";
+import {
+  CalificacionDetalle,
+  CalificacionDetalleWithUser,
+  PaginatedResponse,
+} from "../../types";
 import { useEffect, useState } from "react";
 import { clientesService } from "../../services/clientes.service";
 import { useAuth } from "../../context/AuthContext"; // Import useAuth
 import { calificacionesService } from "../../services/calificaciones.service"; // Import calificacionesService
 import toast from "react-hot-toast";
 import CommentCard from "./CommentCard";
+import CommentCardSkeleton from "./CommentCardSkeleton";
 
 interface ServiceCommentsProps {
-  detalles: CalificacionDetalle[];
+  detallesPaginados: PaginatedResponse<CalificacionDetalle>;
+  commentLoading: boolean;
 }
 
-const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
+const ServiceComments: React.FC<ServiceCommentsProps> = ({
+  detallesPaginados,
+  commentLoading,
+}) => {
   const [detallesWithClientName, setDetallesWithClientName] = useState<
     CalificacionDetalleWithUser[]
   >([]);
   const { userResponseDTO } = useAuth();
+  const detalles = detallesPaginados.content;
 
   useEffect(() => {
     const fetchClientNames = async () => {
@@ -80,6 +90,10 @@ const ServiceComments: React.FC<ServiceCommentsProps> = ({ detalles }) => {
       toast.error("Error eliminando comentario");
     }
   };
+
+  if (commentLoading) {
+    return <CommentCardSkeleton />;
+  }
 
   return (
     <div className="max-w-3xl mt-8 p-6">

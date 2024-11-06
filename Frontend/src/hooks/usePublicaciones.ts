@@ -34,12 +34,9 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
           const publicacion = await publicacionesService.getPublicacion(
             parseInt(publicacionId)
           );
-          const calificacion =
-            await calificacionesService.getCalificacionByPublicacionId(
-              publicacion.publicacionId
-            );
-          const userDto = await trabajadorService.getUserByTrabajadorId(
-            publicacion.publicacionId
+          const { calificacion, userDto } = await getComentarios(
+            publicacion.publicacionId,
+            publicacion.trabajadorId
           );
           setUniquePublicacion({
             ...publicacion,
@@ -87,12 +84,30 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
     fetchServicios();
   }, [searchQuery, currentPage, location.search, publicacionId]);
 
+  const getComentarios = async (
+    publicacionId: number,
+    trabajadorId: number,
+    page = 0
+  ) => {
+    const calificacion =
+      await calificacionesService.getCalificacionByPublicacionId(
+        publicacionId,
+        page
+      );
+    const userDto = await trabajadorService.getUserByTrabajadorId(trabajadorId);
+    return {
+      calificacion,
+      userDto,
+    };
+  };
+
   return {
     publicaciones,
     uniquePublicacion,
     loading,
     totalPages,
     setUniquePublicacion,
+    getComentarios,
   };
 };
 

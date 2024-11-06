@@ -26,7 +26,10 @@ export interface Calificacion {
   publicacionId: Publicacion;
   calificacionGeneral: number;
   detalles: CalificacionDetalle[];
+  detallesPaginados: PaginatedResponse<CalificacionDetalle>;
 }
+
+export type CalificacionPaginatedResponse = PaginatedResponse<Calificacion>;
 
 export type CalificacionForm = Omit<
   Calificacion,
