@@ -42,7 +42,10 @@ export const useCalificaciones = () => {
     data: Omit<CalificacionDetalle, "calificacionDetalleId">
   ) => {
     try {
-      return await calificacionesService.createDetalle(data);
+      const response = await calificacionesService.createDetalle(data);
+      toast.success("Calificación creada exitosamente");
+
+      return response;
     } catch (err) {
       toast.error("Error al crear el detalle de la calificación");
       throw err;

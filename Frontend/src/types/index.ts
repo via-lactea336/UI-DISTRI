@@ -47,6 +47,10 @@ export interface CalificacionDetalle {
   comentario: string;
 }
 
+export interface CalificacionDetalleWithUser extends CalificacionDetalle {
+  usuario: UserResponseDTO;
+}
+
 export interface Categoria {
   categoriaId: number;
   nombreCategoria: string;
@@ -71,10 +75,18 @@ export interface RegisterData {
 export interface User extends RegisterData {
   activo: boolean;
   rolId: string;
+  tipoUsuario: "cliente" | "trabajador";
 }
 
 export interface UserToken {
   token: string | null;
+}
+
+export interface UserResponseDTO extends Omit<User, "contrasena">, UserToken {
+  usuarioId: number;
+  createdAt: string;
+  updatedAt: string | null;
+  idClienteTrabajador: number;
 }
 
 export interface LoginCredentials {
@@ -119,3 +131,11 @@ export interface TipoDePrecio {
 export interface PublicacionConCalificacion extends Publicacion {
   calificacion: Calificacion;
 }
+
+export interface PublicacionConUsuario extends PublicacionConCalificacion {
+  user: UserResponseDTO;
+}
+
+export type Event = React.ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>;

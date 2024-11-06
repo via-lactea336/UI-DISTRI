@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { publicacionesService } from "../services/publicaciones.service";
 import { calificacionesService } from "../services/calificaciones.service";
-import { PublicacionConCalificacion, PublicacionResponse } from "../types";
+import {
+  PublicacionConCalificacion,
+  PublicacionConUsuario,
+  PublicacionResponse,
+} from "../types";
+import { trabajadorService } from "../services/trabajador.service";
 
 const usePublicaciones = (searchQuery: string, currentPage: number) => {
   const [publicaciones, setPublicaciones] = useState<
     PublicacionConCalificacion[]
   >([]);
   const [uniquePublicacion, setUniquePublicacion] =
-    useState<PublicacionConCalificacion>();
+    useState<PublicacionConUsuario>();
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const location = useLocation();
@@ -33,9 +38,13 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
             await calificacionesService.getCalificacionByPublicacionId(
               publicacion.publicacionId
             );
+          const userDto = await trabajadorService.getUserByTrabajadorId(
+            publicacion.publicacionId
+          );
           setUniquePublicacion({
             ...publicacion,
             calificacion: calificacion || { calificacionGeneral: 0 },
+            user: userDto,
           });
           setLoading(false);
           return;
@@ -78,7 +87,13 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
     fetchServicios();
   }, [searchQuery, currentPage, location.search, publicacionId]);
 
-  return { publicaciones, uniquePublicacion, loading, totalPages };
+  return {
+    publicaciones,
+    uniquePublicacion,
+    loading,
+    totalPages,
+    setUniquePublicacion,
+  };
 };
 
 export default usePublicaciones;

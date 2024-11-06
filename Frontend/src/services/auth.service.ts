@@ -1,16 +1,17 @@
-import { LoginCredentials, RegisterData, UserToken } from "../types";
+import { LoginCredentials, User, UserResponseDTO } from "../types";
 import api from "./api";
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<UserToken> {
+  async login(credentials: LoginCredentials): Promise<UserResponseDTO> {
     const response = await api.post("/auth/login", credentials);
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userResponseDTO", JSON.stringify(response.data));
     }
-    return response.data as UserToken;
+    return response.data as UserResponseDTO;
   },
 
-  async register(data: RegisterData) {
+  async register(data: User) {
     const response = await api.post("/auth/register", data);
     return response.status;
   },
@@ -22,5 +23,6 @@ export const authService = {
 
   logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("userResponseDTO");
   },
 };

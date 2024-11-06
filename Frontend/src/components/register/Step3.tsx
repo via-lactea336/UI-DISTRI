@@ -1,19 +1,43 @@
 import React from "react";
-import { FileText, Image } from "lucide-react";
-
+import { FileText, Image, ChevronDown } from "lucide-react"; // Import ChevronDown
+import { Event } from "../../types";
 interface Step3Props {
   formData: {
     bio: string;
     imgPerfil: string;
+    tipoUsuario: "cliente" | "trabajador";
   };
-  handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  handleChange: (e: Event) => void;
 }
 
 const Step3: React.FC<Step3Props> = ({ formData, handleChange }) => {
   return (
     <div className="space-y-4">
+      <div>
+        <label
+          htmlFor="userType"
+          className="block text-sm font-medium text-[var(--color-text)]"
+        >
+          Quieres registrarte como:{" "}
+        </label>
+        <div className="mt-1 relative">
+          <select
+            id="userType"
+            name="tipoUsuario"
+            value={formData.tipoUsuario}
+            onChange={handleChange}
+            required
+            className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+          >
+            <option value="cliente">Cliente</option>
+            <option value="trabajador">Trabajador</option>
+          </select>
+          <ChevronDown
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
+        </div>
+      </div>
       <div>
         <label
           htmlFor="bio"

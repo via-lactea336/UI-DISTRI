@@ -1,6 +1,6 @@
 // Header.tsx
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import ProfileMenu from "./ProfileMenu";
 
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
         >
           servicios<span className="text-[var(--color-primary)]">rápidos</span>
         </Link>
-        <div className="hidden md:flex flex-grow max-w-xl mx-4">
+        {/* <div className="hidden md:flex flex-grow max-w-xl mx-4">
           <div className="relative w-full">
             <input
               type="text"
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
               <Search size={20} />
             </button>
           </div>
-        </div>
+        </div> */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link
             to="/servicios"

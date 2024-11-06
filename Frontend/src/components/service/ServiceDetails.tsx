@@ -1,47 +1,55 @@
 import React from "react";
-import { Star } from "lucide-react";
-import { PublicacionConCalificacion } from "../../types";
-import CreateCalificacionForm from "../calificaciones/CreateCalificacionForm";
+import { PublicacionConUsuario } from "../../types";
+import RenderStars from "./RenderStars";
 
 interface ServiceDetailsProps {
-  uniquePublicacion: PublicacionConCalificacion;
+  uniquePublicacion: PublicacionConUsuario;
 }
 
 const ServiceDetails: React.FC<ServiceDetailsProps> = ({
   uniquePublicacion,
 }) => {
   return (
-    <section className="flex flex-col">
-      <div className="bg-gray-200 p-4 rounded-lg shadow-md mb-6">
-        <img
-          src={uniquePublicacion.imagen}
-          alt={uniquePublicacion.descripcion}
-          className="w-full h-64 object-cover rounded-lg"
-        />
-      </div>
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col w-2/4">
-          <div className="">
+    <section className="container mx-auto px-4 pb-8 flex justify-between items-center">
+      <div className="flex justify-between items-start ">
+        <div className="flex flex-col w-full gap-2">
+          <div className="flex justify-between items-center">
             <h1 className="text-3xl font-semibold text-neutral-800">
               {uniquePublicacion.titulo}
             </h1>
-            <div className="flex items-center mb-4 gap-2 py-2">
-              <Star className="text-yellow-400 mr-1" size={24} />
-              <span className="text-lg font-medium">
-                {uniquePublicacion.calificacion.calificacionGeneral.toFixed(2)}
-              </span>
-              <span className="text-neutral-500">
-                ({uniquePublicacion.calificacion.calificacionGeneral} reviews)
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold mb-4">Sobre el servicio</h2>
-            <p className="text-lg mb-6">{uniquePublicacion.descripcion}</p>
-            <p className="text-lg mb-6">
-              <strong>Precio:</strong>{" "}
+            <span className="text-lg font-semibold px-3 py-1 bg-gray-200 rounded-full">
               {uniquePublicacion.precio.toLocaleString("es-PY")} Gs.
-            </p>
+            </span>
           </div>
+          <div className="flex items-center gap-2 py-1">
+            <RenderStars
+              rating={uniquePublicacion.calificacion.calificacionGeneral}
+            />
+            <span className="text-muted-foreground">
+              {uniquePublicacion.calificacion.calificacionGeneral.toFixed(2)}
+            </span>
+          </div>
+          <span className="text-lg font-medium">
+            Por {uniquePublicacion.user.nombre}
+          </span>
+          <div className="px-0 space-y-6 mt-2">
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">Sobre el servicio</h2>
+              <p className="text-gray-600">{uniquePublicacion.descripcion}</p>
+            </div>
+          </div>
+
+          <button className="mt-4 bg-[var(--color-primary)] text-white py-2 px-4 rounded-md hover:bg-[var(--color-primary-dark)] transition duration-300">
+            Contratar
+          </button>
         </div>
+      </div>
+      <div className="">
+        <img
+          src={uniquePublicacion.imagen}
+          alt={uniquePublicacion.descripcion}
+          className="w-full h-96 object-cover rounded-lg"
+        />
       </div>
     </section>
   );
