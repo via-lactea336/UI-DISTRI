@@ -3,7 +3,7 @@ import { PublicacionConUsuario } from "../../types";
 import RenderStars from "./RenderStars";
 import { contratoService } from "../../services/contratos.service";
 import { useAuth } from "../../context/AuthContext";
-
+   
 interface ServiceDetailsProps {
   uniquePublicacion: PublicacionConUsuario;
 }
