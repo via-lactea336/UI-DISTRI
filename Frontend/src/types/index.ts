@@ -189,3 +189,25 @@ export interface EventoCreate {
   fecha: string;
   lugar: string;
 }
+
+export interface ContratoDTO {
+  contratoId: number;
+  publicacionId: number;
+  clienteId: number;
+  trabajadorId: number;
+  fechaContrato: string;
+  estadoId: number;
+  precio: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContratoCreate {
+  publicacionId: number;
+  clienteId: number;
+  trabajadorId: number;
+  fechaContrato: string;
+  estadoId: number;
+  precio: number;
+  createdAt: string;
+}
