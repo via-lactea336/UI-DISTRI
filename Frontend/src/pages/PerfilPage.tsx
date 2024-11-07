@@ -1,28 +1,54 @@
-import React, { useState } from "react";
-import { User, Mail, Phone, MapPin, Edit2, Camera } from "lucide-react";
+import React, { useState, ChangeEvent } from "react";
+import { useAuth } from "../context/AuthContext";
+import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
+import { userService } from "../services/user.service";
 
-const PerfilPage: React.FC = () => {
-  const [editMode, setEditMode] = useState(false);
-  const [perfil, setPerfil] = useState({
-    nombre: "Ana García",
-    email: "ana.garcia@email.com",
-    telefono: "+34 123 456 789",
-    direccion: "Calle Principal 123, Madrid",
-    descripcion:
-      "Soy una profesional con más de 10 años de experiencia en servicios de limpieza y organización del hogar.",
+import toast from "react-hot-toast";
+
+const PerfilPage = () => {
+  const { userResponseDTO, isAuth } = useAuth();
+
+  console.log(userResponseDTO)
+  // Define el estado del formulario y el estado de edición
+  const [formData, setFormData] = useState({
+    nombre: userResponseDTO.nombre || "",
+    email: userResponseDTO.email || "",
+    telefono: userResponseDTO.telefono || "",
+    direccion: userResponseDTO.direccion || "",
+    bio: userResponseDTO.bio || "",
   });
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  // Verifica que el usuario esté autenticado
+  if (!isAuth) {
+    return <div>No estás autenticado. Por favor, inicia sesión.</div>;
+  }
+
+  // Maneja el cambio en los campos de entrada del formulario
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setPerfil((prevPerfil) => ({ ...prevPerfil, [name]: value }));
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEditMode(false);
-    console.log("Perfil actualizado:", perfil);
+  // Función para guardar los cambios
+  const handleSave = async () => {
+    try {
+      // Utiliza el servicio para actualizar los datos del usuario
+      await userService.updateUser(userResponseDTO.usuarioId, formData);
+      toast.success("Perfil actualizado con éxito"); // Muestra un toast de éxito
+      setIsEditing(false); // Deshabilita el modo edición después de guardar
+    } catch (error) {
+      console.error("Error al actualizar el perfil:", error);
+      toast.error("Error al actualizar el perfil"); // Muestra un toast de error
+    }
+  };
+
+  // Alterna el estado de edición
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
   };
 
   return (
@@ -44,137 +70,72 @@ const PerfilPage: React.FC = () => {
         </div>
         <div className="pt-20 p-8">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[var(--color-secondary)]">
-              Mi Perfil
-            </h1>
+            <h1 className="text-3xl font-bold text-[var(--color-secondary)]">Mi Perfil</h1>
             <button
-              onClick={() => setEditMode(!editMode)}
-              className="flex items-center text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+              onClick={isEditing ? handleSave : toggleEdit}
+              className={`px-4 py-2 rounded-md ${
+                isEditing ? "bg-green-500" : "bg-[var(--color-primary)]"
+              } text-white font-semibold`}
             >
-              <Edit2 size={20} className="mr-2" />
-              {editMode ? "Cancelar" : "Editar"}
+              {isEditing ? "Guardar cambios" : "Editar perfil"}
             </button>
           </div>
-
-          {editMode ? (
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="nombre"
-                    className="block text-sm font-medium text-[var(--color-text)]"
-                  >
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    id="nombre"
-                    name="nombre"
-                    value={perfil.nombre}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring focus:ring-[var(--color-primary)] focus:ring-opacity-50"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-[var(--color-text)]"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={perfil.email}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring focus:ring-[var(--color-primary)] focus:ring-opacity-50"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="telefono"
-                    className="block text-sm font-medium text-[var(--color-text)]"
-                  >
-                    Teléfono
-                  </label>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    value={perfil.telefono}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring focus:ring-[var(--color-primary)] focus:ring-opacity-50"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="direccion"
-                    className="block text-sm font-medium text-[var(--color-text)]"
-                  >
-                    Dirección
-                  </label>
-                  <input
-                    type="text"
-                    id="direccion"
-                    name="direccion"
-                    value={perfil.direccion}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring focus:ring-[var(--color-primary)] focus:ring-opacity-50"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="descripcion"
-                    className="block text-sm font-medium text-[var(--color-text)]"
-                  >
-                    Descripción
-                  </label>
-                  <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    rows={4}
-                    value={perfil.descripcion}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--color-primary)] focus:ring focus:ring-[var(--color-primary)] focus:ring-opacity-50"
-                  ></textarea>
-                </div>
-              </div>
-              <div className="mt-6">
-                <button type="submit" className="w-full btn-primary">
-                  Guardar Cambios
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="space-y-6">
-              <div className="flex items-center">
-                <User className="text-[var(--color-primary)] mr-3" size={24} />
-                <span className="text-lg">{perfil.nombre}</span>
-              </div>
-              <div className="flex items-center">
-                <Mail className="text-[var(--color-primary)] mr-3" size={24} />
-                <span>{perfil.email}</span>
-              </div>
-              <div className="flex items-center">
-                <Phone className="text-[var(--color-primary)] mr-3" size={24} />
-                <span>{perfil.telefono}</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin
-                  className="text-[var(--color-primary)] mr-3"
-                  size={24}
-                />
-                <span>{perfil.direccion}</span>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-2 text-[var(--color-secondary)]">
-                  Sobre mí
-                </h3>
-                <p className="text-[var(--color-text)]">{perfil.descripcion}</p>
-              </div>
+          <div className="space-y-6">
+            <div className="flex items-center">
+              <User className="text-[var(--color-primary)] mr-3" size={24} />
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                className="text-lg border rounded-md p-2 w-full"
+                disabled={!isEditing}
+              />
             </div>
-          )}
+            <div className="flex items-center">
+              <Mail className="text-[var(--color-primary)] mr-3" size={24} />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="border rounded-md p-2 w-full"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="flex items-center">
+              <Phone className="text-[var(--color-primary)] mr-3" size={24} />
+              <input
+                type="tel"
+                name="telefono"
+                value={formData.telefono}
+                onChange={handleInputChange}
+                className="border rounded-md p-2 w-full"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="flex items-center">
+              <MapPin className="text-[var(--color-primary)] mr-3" size={24} />
+              <input
+                type="text"
+                name="direccion"
+                value={formData.direccion}
+                onChange={handleInputChange}
+                className="border rounded-md p-2 w-full"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2 text-[var(--color-secondary)]">Sobre mí</h3>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleInputChange}
+                className="border rounded-md p-2 w-full"
+                disabled={!isEditing}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
