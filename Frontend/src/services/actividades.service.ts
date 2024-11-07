@@ -1,4 +1,4 @@
-import { ActividadCreate, ActividadesDTO } from "../types";
+import { ActividadCreate, ActividadesDTO, PaginatedResponse } from "../types";
 import api from "./api";
 
 export const actividadesService = {
@@ -27,7 +27,7 @@ export const actividadesService = {
   },
 
   async getActividadesByEventoId(eventoId: number) {
-    const response = await api.get<ActividadesDTO[]>(
+    const response = await api.get<PaginatedResponse<ActividadesDTO>>(
       `/actividades/evento/${eventoId}`
     );
     return response.data;
