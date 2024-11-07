@@ -1,7 +1,9 @@
 import React from "react";
 import { PublicacionConUsuario } from "../../types";
 import RenderStars from "./RenderStars";
-
+import { contratoService } from "../../services/contratos.service";
+import { useAuth } from "../../context/AuthContext";
+   
 interface ServiceDetailsProps {
   uniquePublicacion: PublicacionConUsuario;
 }
@@ -9,6 +11,26 @@ interface ServiceDetailsProps {
 const ServiceDetails: React.FC<ServiceDetailsProps> = ({
   uniquePublicacion,
 }) => {
+
+  const { userResponseDTO } = useAuth();
+  const handleSubmit = async () => {
+    try {
+      const contratoData = {
+        publicacionId: uniquePublicacion.publicacionId,
+        clienteId: userResponseDTO.idClienteTrabajador,
+        trabajadorId: uniquePublicacion.trabajadorId,
+        fechaContrato: new Date().toISOString(),
+        estadoId: 3,
+        precio: uniquePublicacion.precio,
+        createdAt:new Date().toISOString()
+      };
+
+      const response = await contratoService.createContrato(contratoData);
+      console.log("Contrato creado con éxito:", response);
+    } catch (error) {
+      console.error("Error al crear el contrato:", error);
+    }
+  };
   return (
     <section className="container mx-auto px-4 pb-8 flex justify-between items-center">
       <div className="flex justify-between items-start ">
@@ -39,7 +61,10 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
             </div>
           </div>
 
-          <button className="mt-4 bg-[var(--color-primary)] text-white py-2 px-4 rounded-md hover:bg-[var(--color-primary-dark)] transition duration-300">
+          <button
+            onClick={handleSubmit}
+            className="mt-4 bg-[var(--color-primary)] text-white py-2 px-4 rounded-md hover:bg-[var(--color-primary-dark)] transition duration-300"
+          >
             Contratar
           </button>
         </div>
