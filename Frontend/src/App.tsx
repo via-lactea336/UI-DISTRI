@@ -14,14 +14,20 @@ import PropuestasPage from "./pages/PropuestasPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";// Importa AdminRoute
 import Error404Page from "./pages/Error404Page";
 import Error500Page from "./pages/Error500Page";
-import { useAuth } from "./context/AuthContext";
+import Error401Page from "./pages/Error401Page";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { configureInterceptor } from "./services/api";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
+import AdminPage from "./pages/AdminPage";// Importa AdminPage
+import EstadosPage from "./pages/EstadosPage";  // Página de estados
 import CreatePublication from "./pages/CrearPublicacionPage";
 import EventCreator from "./pages/EventosCrearPage";
 import EventViewer from "./pages/ListarEventosPage";
+import UsuariosPage from "./pages/UsuariosPage";
+
 
 const InterceptorSetup = () => {
   const { logout, setSessionExpired } = useAuth();
@@ -36,6 +42,7 @@ const InterceptorSetup = () => {
 
 function App() {
   return (
+    <AuthProvider> {/* Envuelve toda la aplicación con AuthProvider */}
     <Router>
       <InterceptorSetup />
       <div className="min-h-screen flex flex-col bg-gray-100">
@@ -57,17 +64,29 @@ function App() {
             <Route path="/propuestas" element={<ProtectedRoute />}>
               <Route path="" element={<PropuestasPage />} />
             </Route>
+            <Route
+              path="/admin"
+              element={
+         
+                  <AdminPage />
+        
+              }
+            />
+            <Route path="/usuarios" element={<UsuariosPage />} />
+            <Route path="/estados" element={<EstadosPage />} />  {/* Esto es correcto */}
             <Route path="/publicacion/create" element={<CreatePublication />} />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/500" element={<Error500Page />} />
-            <Route path="*" element={<Error404Page />} />{" "}
-            {/* Catch-all route for 404 */}
+            <Route path="*" element={<Error404Page />} /> {/* Catch-all route for 404 */}
+            <Route path="/unauthorized" element={<Error401Page />} />
           </Routes>
         </main>
         <Footer />
       </div>
     </Router>
+  </AuthProvider>
   );
 }
 

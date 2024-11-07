@@ -8,6 +8,7 @@ const Header: React.FC = () => {
   const { isAuth, logout } = useAuth();
   const navigate = useNavigate();
 
+  const {userResponseDTO}= useAuth()
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -58,6 +59,15 @@ const Header: React.FC = () => {
             Ofrecer un servicio
           </button>
 
+   {/* Botón de acceso al panel solo si es admin */}
+      {isAuth && userResponseDTO.rolId === "2" && (
+            <button
+              className="btn-primary"
+              onClick={() => navigate("/admin")}
+            >
+              Panel de Admin
+            </button>
+          )}
 
           {isAuth ? (
             <ProfileMenu onLogout={handleLogout} />
