@@ -31,7 +31,10 @@ const ServiceDetailPage: React.FC = () => {
           ...uniquePublicacion.calificacion.detallesPaginados,
           content: [
             newDetalle,
-            ...uniquePublicacion.calificacion.detallesPaginados.content,
+            ...uniquePublicacion.calificacion.detallesPaginados.content.slice(
+              0,
+              2
+            ),
           ],
         },
       },
@@ -53,7 +56,9 @@ const ServiceDetailPage: React.FC = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setCommentLoading(false);
+      if (!loading) {
+        setCommentLoading(false);
+      }
     }
   };
 

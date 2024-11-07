@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "../services/auth.service";
 import toast from "react-hot-toast";
-import { UserToken, LoginCredentials, User, UserResponseDTO } from "../types";
+import {
+  UserToken,
+  LoginCredentials,
+  User,
+  UserResponseDTO,
+  TrabajadorRegisterData,
+} from "../types";
 import { getHttpErrorMessage } from "../constants";
 
 interface AuthContextType {
@@ -10,7 +16,7 @@ interface AuthContextType {
   loading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: (showToast: boolean) => void;
-  register: (data: User) => Promise<void>;
+  register: (data: User | TrabajadorRegisterData) => Promise<void>;
   isAuth: boolean;
   sessionExpired: boolean;
   setSessionExpired: (expired: boolean) => void;
@@ -99,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register = async (data: User) => {
+  const register = async (data: User | TrabajadorRegisterData) => {
     try {
       setLoading(true);
       await authService.register(data);

@@ -81,6 +81,11 @@ export interface User extends RegisterData {
   tipoUsuario: "cliente" | "trabajador";
 }
 
+export interface TrabajadorRegisterData extends User {
+  nombreTrabajo: string;
+  descripcionTrabajo: string;
+}
+
 export interface UserToken {
   token: string | null;
 }

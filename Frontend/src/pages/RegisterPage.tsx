@@ -22,6 +22,8 @@ const RegisterPage: React.FC = () => {
     bio: "",
     imgPerfil: "",
     tipoUsuario: "cliente" as "cliente" | "trabajador",
+    nombreTrabajo: "",
+    descripcionTrabajo: "",
   });
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -56,6 +58,8 @@ const RegisterPage: React.FC = () => {
         activo: true,
         rolId: "1",
         tipoUsuario: formData.tipoUsuario,
+        descripcionTrabajo: formData.descripcionTrabajo,
+        nombreTrabajo: formData.nombre,
       });
       navigate("/login");
     } catch (error) {

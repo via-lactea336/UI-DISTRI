@@ -6,6 +6,8 @@ interface Step3Props {
     bio: string;
     imgPerfil: string;
     tipoUsuario: "cliente" | "trabajador";
+    nombreTrabajo?: string;
+    descripcionTrabajo?: string;
   };
   handleChange: (e: Event) => void;
 }
@@ -38,6 +40,50 @@ const Step3: React.FC<Step3Props> = ({ formData, handleChange }) => {
           />
         </div>
       </div>
+      {formData.tipoUsuario === "trabajador" && (
+        <>
+          <div>
+            <label
+              htmlFor="nombreTrabajo"
+              className="block text-sm font-medium text-[var(--color-text)]"
+            >
+              Nombre del Trabajo <span className="text-red-500">*</span>
+            </label>
+            <div className="mt-1 relative">
+              <input
+                id="nombreTrabajo"
+                name="nombreTrabajo"
+                type="text"
+                required
+                value={formData.nombreTrabajo || ""}
+                onChange={handleChange}
+                className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+                placeholder="Nombre del trabajo"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="descripcionTrabajo"
+              className="block text-sm font-medium text-[var(--color-text)]"
+            >
+              Descripción del Trabajo <span className="text-red-500">*</span>
+            </label>
+            <div className="mt-1 relative">
+              <textarea
+                id="descripcionTrabajo"
+                name="descripcionTrabajo"
+                required
+                rows={4}
+                value={formData.descripcionTrabajo || ""}
+                onChange={handleChange}
+                className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+                placeholder="Describe tu trabajo..."
+              ></textarea>
+            </div>
+          </div>
+        </>
+      )}
       <div>
         <label
           htmlFor="bio"
