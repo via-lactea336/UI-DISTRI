@@ -6,8 +6,12 @@ import { categoriasService } from '../services/categorias.service'
 import { tipoDePrecioService } from '../services/tipoDePrecio.service'
 import { calificacionesService } from '../services/calificaciones.service'
 import { Categoria, TipoDePrecio } from '../types'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function Component() {
+    const navigate = useNavigate();
+    const { userResponseDTO } = useAuth();
     const [title, setTitle] = useState("")
     const [imageUrl, setImageUrl] = useState("")
     const [description, setDescription] = useState("")
@@ -48,7 +52,7 @@ export default function Component() {
 
         try {
             const newPublicacion = await publicacionesService.createPublicacion({
-                trabajadorId: 4,
+                trabajadorId: userResponseDTO.idClienteTrabajador,
                 titulo: title.trim(),
                 descripcion: description.trim(),
                 categoriaId: category,
@@ -59,7 +63,7 @@ export default function Component() {
                 updatedAt: new Date().toISOString()
             })
             calificacionesService.createCalificacion({
-                publicacionId: newPublicacion.trabajadorId,
+                publicacionId: newPublicacion.publicacionId,
                 calificacionGeneral: 0
 
             })

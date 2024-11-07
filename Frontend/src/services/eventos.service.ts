@@ -1,11 +1,12 @@
 import api from "./api";
-import { EventoCreate, EventoDTO } from "../types";
+import { ActividadesDTO, EventoConActividadesDTO, EventoCreate, EventoDTO, PaginatedResponse } from "../types";
+import { actividadesService } from "./actividades.service";
 
 export const eventosService = {
   async getEventos() {
-    const response = await api.get<EventoDTO[]>("/eventos");
+    const response = await api.get<PaginatedResponse<EventoDTO>>("/eventos");
     return response.data;
-  },
+  },
   async getEvento(id: number) {
     const response = await api.get<EventoDTO>(`/eventos/${id}`);
     return response.data;

@@ -169,6 +169,15 @@ export interface EventoDTO {
   lugar: string;
 }
 
+export interface EventoConActividadesDTO {
+  eventoId: number;
+  trabajadorId: number;
+  nombreEvento: string;
+  fecha: string;
+  lugar: string;
+  actividades: ActividadesDTO[];
+}
+
 export interface EventoCreate {
   trabajadorId: number;
   nombreEvento: string;
