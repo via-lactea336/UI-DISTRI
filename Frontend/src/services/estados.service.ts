@@ -1,10 +1,20 @@
+export interface PaginatedResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  pageNumber: number;
+  // Puedes agregar más campos si es necesario
+}
+
 import api from './api';
 import type { Estado } from '../types';
 
 export const estadosService = {
   async getEstados() {
-    const response = await api.get<Estado[]>('/estados');
-    return response.data;
+    // Ahora la respuesta será de tipo PaginatedResponse<Estado>
+    const response = await api.get<PaginatedResponse<Estado>>('/estados');
+    return response.data;  // Esto tiene la propiedad 'content' que contiene el array de estados
   },
 
   async getEstado(id: number) {
