@@ -1,9 +1,9 @@
-import api from "./api";
 import { UserResponseDTO } from "../types";
+import api from "./api";
 
 export const userService = {
   async getUsuarios() {
-    const response = await api.get("/usuarios"); // Asegúrate de que este endpoint devuelva la lista de usuarios
+    const response = await api.get("/usuarios/paginado"); // Asegúrate de que este endpoint devuelva la lista de usuarios
     return response.data;
   },
 

@@ -5,10 +5,11 @@ import { calificacionesService } from "../services/calificaciones.service";
 
 import { trabajadorService } from "../services/trabajador.service";
 import {
+  Calificacion,
   PublicacionConCalificacion,
   PublicacionConUsuario,
   PublicacionResponse,
-} from "../types/index";
+} from "../types";
 
 const usePublicaciones = (searchQuery: string, currentPage: number) => {
   const [publicaciones, setPublicaciones] = useState<
@@ -94,7 +95,7 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
             `Error al obtener la calificación para la publicación ${publicacion.publicacionId}`,
             error
           );
-          calificacion = { calificacionGeneral: 0 };
+          calificacion = { calificacionGeneral: 0 } as Calificacion;
         }
 
         return {

@@ -24,7 +24,7 @@ const UsuariosPage: React.FC = () => {
       }
     };
 
-    if (userResponseDTO && userResponseDTO.rolId === "2") {
+    if (userResponseDTO) {
       fetchUsuarios();
     }
   }, [userResponseDTO]);
