@@ -22,8 +22,18 @@ export const authService = {
   },
 
   async validateToken(): Promise<boolean> {
-    const response = await api.get("/auth/validate-token");
-    return response.data.isValid;
+    try {
+      const response = await api.get("/auth/validate-token");
+      if (!response.data.isValid) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userResponseDTO");
+      }
+      return response.data.isValid;
+    } catch (error) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userResponseDTO");
+      return false;
+    }
   },
 
   logout() {

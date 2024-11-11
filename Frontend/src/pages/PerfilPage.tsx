@@ -2,30 +2,30 @@ import React, { useState, ChangeEvent } from "react";
 import { useAuth } from "../context/AuthContext";
 import { User, Mail, Phone, MapPin, Camera } from "lucide-react";
 import { userService } from "../services/user.service";
-
 import toast from "react-hot-toast";
 
 const PerfilPage = () => {
   const { userResponseDTO, isAuth } = useAuth();
 
-  console.log(userResponseDTO)
-  // Define el estado del formulario y el estado de edición
   const [formData, setFormData] = useState({
     nombre: userResponseDTO.nombre || "",
     email: userResponseDTO.email || "",
     telefono: userResponseDTO.telefono || "",
     direccion: userResponseDTO.direccion || "",
     bio: userResponseDTO.bio || "",
+    imgPerfil: userResponseDTO.imgPerfil || "", // Agregar imagen de perfil
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // Controlar el estado del modal para la URL de la imagen
+  const [newImageUrl, setNewImageUrl] = useState(""); // URL de la nueva imagen
 
-  // Verifica que el usuario esté autenticado
   if (!isAuth) {
     return <div>No estás autenticado. Por favor, inicia sesión.</div>;
   }
 
-  // Maneja el cambio en los campos de entrada del formulario
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -33,22 +33,52 @@ const PerfilPage = () => {
     });
   };
 
-  // Función para guardar los cambios
   const handleSave = async () => {
+    const { nombre, email, telefono, direccion, bio } = formData;
+
+    // Verificar si hay campos vacíos
+    if (!nombre || !email || !telefono || !direccion || !bio) {
+      toast.error("Todos los campos son obligatorios");
+      return;
+    }
+
     try {
-      // Utiliza el servicio para actualizar los datos del usuario
       await userService.updateUser(userResponseDTO.usuarioId, formData);
-      toast.success("Perfil actualizado con éxito"); // Muestra un toast de éxito
-      setIsEditing(false); // Deshabilita el modo edición después de guardar
+      toast.success("Perfil actualizado con éxito");
+      setIsEditing(false);
     } catch (error) {
       console.error("Error al actualizar el perfil:", error);
-      toast.error("Error al actualizar el perfil"); // Muestra un toast de error
+      toast.error("Error al actualizar el perfil");
     }
   };
 
-  // Alterna el estado de edición
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleImageChange = () => {
+    // Solo permitir cambiar la imagen si está en modo de edición
+    if (isEditing) {
+      setIsImageModalOpen(true);
+    }
+  };
+
+  const handleImageUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewImageUrl(e.target.value);
+  };
+
+  const saveImageUrl = () => {
+    // Validar si la URL no está vacía
+    if (newImageUrl) {
+      setFormData({
+        ...formData,
+        imgPerfil: newImageUrl, // Actualizar la imagen de perfil con la nueva URL
+      });
+      setIsImageModalOpen(false); // Cerrar el modal
+      toast.success("Imagen de perfil actualizada");
+    } else {
+      toast.error("Por favor ingresa una URL válida");
+    }
   };
 
   return (
@@ -58,11 +88,17 @@ const PerfilPage = () => {
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
             <div className="relative">
               <img
-                src="https://unavatar.io/github/mdo"
+                src={formData.imgPerfil || "https://unavatar.io/github/mdo"} // Mostrar imagen desde el estado
                 alt="Foto de perfil"
                 className="w-32 h-32 rounded-full border-4 border-white object-cover"
               />
-              <button className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+              <button
+                onClick={handleImageChange}
+                className={`absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 ${
+                  !isEditing ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={!isEditing} // Deshabilitar el botón si no está en modo de edición
+              >
                 <Camera size={20} className="text-gray-600" />
               </button>
             </div>
@@ -70,7 +106,9 @@ const PerfilPage = () => {
         </div>
         <div className="pt-20 p-8">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-[var(--color-secondary)]">Mi Perfil</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-secondary)]">
+              Mi Perfil
+            </h1>
             <button
               onClick={isEditing ? handleSave : toggleEdit}
               className={`px-4 py-2 rounded-md ${
@@ -126,7 +164,9 @@ const PerfilPage = () => {
               />
             </div>
             <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-2 text-[var(--color-secondary)]">Sobre mí</h3>
+              <h3 className="text-lg font-semibold mb-2 text-[var(--color-secondary)]">
+                Sobre mí
+              </h3>
               <textarea
                 name="bio"
                 value={formData.bio}
@@ -138,6 +178,38 @@ const PerfilPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal para ingresar URL de la imagen */}
+      {isImageModalOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-xl font-semibold mb-4">
+              Actualizar Imagen de Perfil
+            </h3>
+            <input
+              type="url"
+              placeholder="Ingresa la URL de la imagen"
+              value={newImageUrl}
+              onChange={handleImageUrlChange}
+              className="border rounded-md p-2 w-full mb-4"
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={saveImageUrl}
+                className="bg-green-500 text-white py-2 px-4 rounded-md mr-2"
+              >
+                Guardar
+              </button>
+              <button
+                onClick={() => setIsImageModalOpen(false)}
+                className="bg-red-500 text-white py-2 px-4 rounded-md"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

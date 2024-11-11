@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { userService } from "../services/user.service";
 import { UserResponseDTO } from "../types";
@@ -15,8 +15,8 @@ const UsuariosPage: React.FC = () => {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const data = await userService.getUsuarios();
-        setUsuarios(data.content || []);
+        const data = (await userService.getUsuarios()) as UserResponseDTO[];
+        setUsuarios(data || []);
         toast.success("Usuarios cargados correctamente");
       } catch (error) {
         console.error("Error fetching usuarios:", error);
@@ -29,7 +29,12 @@ const UsuariosPage: React.FC = () => {
     }
   }, [userResponseDTO]);
 
-  if (loading) return <div><p>Cargando...</p></div>;
+  if (loading)
+    return (
+      <div>
+        <p>Cargando...</p>
+      </div>
+    );
 
   if (String(userResponseDTO.rolId) !== "2") {
     return <Navigate to="/unauthorized" replace />;
@@ -37,8 +42,12 @@ const UsuariosPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center pt-6">
-      <h1 className="text-6xl font-bold text-[var(--color-primary)] mt-4">Página de Usuarios</h1>
-      <p className="text-xl text-[var(--color-text)] mt-2">Aquí puedes ver todos los usuarios disponibles.</p>
+      <h1 className="text-6xl font-bold text-[var(--color-primary)] mt-4">
+        Página de Usuarios
+      </h1>
+      <p className="text-xl text-[var(--color-text)] mt-2">
+        Aquí puedes ver todos los usuarios disponibles.
+      </p>
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
 

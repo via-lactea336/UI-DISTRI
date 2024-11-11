@@ -1,48 +1,72 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { estadosService } from "../services/estados.service";
 import { Estado } from "../types";
 
 import toast from "react-hot-toast";
 
-
-
 const EstadosPage: React.FC = () => {
   const { userResponseDTO, loading } = useAuth();
   const [estados, setEstados] = useState<Estado[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false); // Para controlar la apertura del modal
-  const [nuevoEstado, setNuevoEstado] = useState<string>(''); // Para capturar el nombre del nuevo estado
+  const [modalOpen, setModalOpen] = useState(false);
+  const [nuevoEstado, setNuevoEstado] = useState<string>("");
+  const [editEstadoId, setEditEstadoId] = useState<number | null>(null);
+  const [editNombre, setEditNombre] = useState<string>("");
 
-  // Función para eliminar un estado
   const deleteEstado = async (estadoId: number) => {
     try {
       await estadosService.deleteEstado(estadoId);
       setEstados(estados.filter((estado) => estado.estadoId !== estadoId));
-      toast.success("Estado eliminado con exito"); 
+      toast.success("Estado eliminado con exito");
     } catch (error) {
       console.error("Error deleting estado:", error);
       toast.error("Error al eliminar un estado");
     }
   };
 
-  // Función para editar un estado
-  const editEstado = (estadoId: number) => {
-    // Lógica de edición, por ejemplo, abrir un modal o redirigir
-    console.log(`Editando estado con ID: ${estadoId}`);
+  const editEstado = (estadoId: number, nombreEstado: string) => {
+    setEditEstadoId(estadoId);
+    setEditNombre(nombreEstado);
   };
 
-  // Función para obtener la lista de estados
+  const saveEditEstado = async (estadoId: number) => {
+    if (!editNombre.trim()) {
+      setError("El nombre del estado es obligatorio.");
+      return;
+    }
+
+    try {
+      const data = {
+        estadoId,
+        nombreEstado: editNombre,
+      };
+
+      const updatedEstado = await estadosService.updateEstado(estadoId, data);
+      setEstados(
+        estados.map((estado) =>
+          estado.estadoId === estadoId ? updatedEstado : estado
+        )
+      );
+      setEditEstadoId(null);
+      setEditNombre("");
+      toast.success("Estado actualizado correctamente.");
+    } catch (error) {
+      console.error("Error actualizando estado:", error);
+      toast.error("Error al actualizar el estado");
+    }
+  };
+
   useEffect(() => {
     const fetchEstados = async () => {
       try {
         const data = await estadosService.getEstados();
         setEstados(data.content || []);
-        toast.success("Estados cargados correctamente")
+        toast.success("Estados cargados correctamente");
       } catch (error) {
         console.error("Error fetching estados:", error);
-        toast.error("Error al cargar los estados")
+        toast.error("Error al cargar los estados");
       }
     };
 
@@ -51,18 +75,15 @@ const EstadosPage: React.FC = () => {
     }
   }, [userResponseDTO]);
 
-  // Función para abrir el modal de agregar estado
   const openModal = () => {
     setModalOpen(true);
   };
 
-  // Función para cerrar el modal
   const closeModal = () => {
     setModalOpen(false);
-    setNuevoEstado(''); // Limpiar el campo de nuevo estado al cerrar el modal
+    setNuevoEstado("");
   };
 
-  // Función para manejar el guardado del nuevo estado
   const handleSaveEstado = async () => {
     if (!nuevoEstado.trim()) {
       setError("El nombre del estado es obligatorio.");
@@ -71,28 +92,35 @@ const EstadosPage: React.FC = () => {
 
     try {
       const newEstado = { nombreEstado: nuevoEstado };
-      const addedEstado = await estadosService.createEstado(newEstado); // Asegúrate de que `addEstado` esté en el servicio
-      setEstados([...estados, addedEstado]); // Añadir el nuevo estado a la lista
-      closeModal(); // Cerrar el modal después de agregar el estado
-      toast.success("Estado agregado correctamente.")
+      const addedEstado = await estadosService.createEstado(newEstado);
+      setEstados([...estados, addedEstado]);
+      closeModal();
+      toast.success("Estado agregado correctamente.");
     } catch (error) {
       console.error("Error adding estado:", error);
-      toast.error("Error al crear el estado")
+      toast.error("Error al crear el estado");
     }
   };
 
-  if (loading) return <div><p>Cargando...</p></div>;
+  if (loading)
+    return (
+      <div>
+        <p>Cargando...</p>
+      </div>
+    );
 
   if (String(userResponseDTO.rolId) !== "2") {
     return <Navigate to="/unauthorized" replace />;
   }
 
   return (
-    
     <div className="flex flex-col items-center justify-center pt-6">
-
-      <h1 className="text-6xl font-bold text-[var(--color-primary)] mt-4">Página de Estados</h1>
-      <p className="text-xl text-[var(--color-text)] mt-2">Aquí puedes ver todos los estados disponibles.</p>
+      <h1 className="text-6xl font-bold text-[var(--color-primary)] mt-4">
+        Página de Estados
+      </h1>
+      <p className="text-xl text-[var(--color-text)] mt-2">
+        Aquí puedes ver todos los estados disponibles.
+      </p>
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
 
@@ -109,14 +137,36 @@ const EstadosPage: React.FC = () => {
             {estados.length > 0 ? (
               estados.map((estado) => (
                 <tr key={estado.estadoId} className="border-t">
-                  <td className="px-4 py-2">{estado.nombreEstado.trim()}</td>
+                  <td className="px-4 py-2">
+                    {editEstadoId === estado.estadoId ? (
+                      <input
+                        type="text"
+                        value={editNombre}
+                        onChange={(e) => setEditNombre(e.target.value)}
+                        className="border border-gray-300 p-2 w-full"
+                      />
+                    ) : (
+                      estado.nombreEstado.trim()
+                    )}
+                  </td>
                   <td className="px-4 py-2 flex space-x-4">
-                    <button
-                      onClick={() => editEstado(estado.estadoId)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Editar
-                    </button>
+                    {editEstadoId === estado.estadoId ? (
+                      <button
+                        onClick={() => saveEditEstado(estado.estadoId)}
+                        className="text-green-500 hover:text-green-700"
+                      >
+                        Guardar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          editEstado(estado.estadoId, estado.nombreEstado)
+                        }
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        Editar
+                      </button>
+                    )}
                     <button
                       onClick={() => deleteEstado(estado.estadoId)}
                       className="text-red-500 hover:text-red-700"
@@ -136,7 +186,6 @@ const EstadosPage: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Botón para abrir el modal */}
         <button
           className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           onClick={openModal}
@@ -145,11 +194,12 @@ const EstadosPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-md w-1/3">
-            <h2 className="text-2xl font-semibold mb-4">Agregar Nuevo Estado</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              Agregar Nuevo Estado
+            </h2>
             <input
               type="text"
               value={nuevoEstado}

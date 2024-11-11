@@ -9,6 +9,7 @@ const ProtectedRoute: React.FC = () => {
   if (loading) {
     return <SkeletonLayout />;
   }
+  console.log(isAuth);
 
   return isAuth ? <Outlet /> : <Navigate to="/login" />;
 };

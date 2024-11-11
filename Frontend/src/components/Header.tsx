@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   const { isAuth, logout } = useAuth();
   const navigate = useNavigate();
 
-  const {userResponseDTO}= useAuth()
+  const { userResponseDTO } = useAuth();
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -48,6 +48,18 @@ const Header: React.FC = () => {
             Explorar
           </Link>
           <Link
+            to="/eventos/create"
+            className="text-[var(--color-text)] hover:text-[var(--color-secondary)]"
+          >
+            Crear evento
+          </Link>
+          <Link
+            to="/eventos"
+            className="text-[var(--color-text)] hover:text-[var(--color-secondary)]"
+          >
+            Eventos
+          </Link>
+          <Link
             to="/propuestas"
             className="text-[var(--color-text)] hover:text-[var(--color-secondary)]"
           >
@@ -55,16 +67,14 @@ const Header: React.FC = () => {
           </Link>
           <button
             className="btn-outline"
-            onClick={() => window.location.href = '/publicacion/create'}>
+            onClick={() => (window.location.href = "/publicacion/create")}
+          >
             Ofrecer un servicio
           </button>
 
-   {/* Botón de acceso al panel solo si es admin */}
-      {isAuth && userResponseDTO.rolId === "2" && (
-            <button
-              className="btn-primary"
-              onClick={() => navigate("/admin")}
-            >
+          {/* Botón de acceso al panel solo si es admin */}
+          {isAuth && userResponseDTO.rolId === "2" && (
+            <button className="btn-primary" onClick={() => navigate("/admin")}>
               Panel de Admin
             </button>
           )}
