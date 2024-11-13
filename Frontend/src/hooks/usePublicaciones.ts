@@ -6,6 +6,7 @@ import { calificacionesService } from "../services/calificaciones.service";
 import { trabajadorService } from "../services/trabajador.service";
 import {
   Calificacion,
+  Publicacion,
   PublicacionConCalificacion,
   PublicacionConUsuario,
   PublicacionResponse,
@@ -133,7 +134,7 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
     try {
       const data = await publicacionesService.getPublicaciones(page);
       const publicacionesConCalificacion = await Promise.all(
-        data.content.map(async (publicacion: PublicacionConCalificacion) => {
+        data.content.map(async (publicacion: Publicacion) => {
           const calificacion =
             await calificacionesService.getCalificacionByPublicacionId(
               publicacion.publicacionId

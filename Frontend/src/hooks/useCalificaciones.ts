@@ -14,6 +14,7 @@ export const useCalificaciones = () => {
       const data = await calificacionesService.getCalificaciones();
       setCalificaciones(data);
       setError(null);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error al cargar las calificaciones");
       toast.error("Error al cargar las calificaciones");
@@ -23,7 +24,7 @@ export const useCalificaciones = () => {
   };
 
   const createCalificacion = async (
-    data: Omit<Calificacion, "calificacionId">
+    data: Omit<Calificacion, "calificacionId"> & { publicacionId: number }
   ) => {
     try {
       const newCalificacion = await calificacionesService.createCalificacion(
