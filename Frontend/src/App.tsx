@@ -26,6 +26,7 @@ import CreatePublication from "./pages/CrearPublicacionPage";
 import EventCreator from "./pages/EventosCrearPage";
 import EventViewer from "./pages/ListarEventosPage";
 import UsuariosPage from "./pages/UsuariosPage";
+import WorkerEvents from "./pages/EventosTrabajador";
 
 const InterceptorSetup = () => {
   const { logout, setSessionExpired } = useAuth();
@@ -55,6 +56,9 @@ function App() {
               </Route>
               <Route path="/eventos" element={<ProtectedRoute />}>
                 <Route path="/eventos" element={<EventViewer />} />
+              </Route>
+              <Route path="/eventos/trabajador" element={<ProtectedRoute />}>
+                <Route path="/eventos/trabajador" element={<WorkerEvents />} />
               </Route>
               <Route path="/eventos/create" element={<EventCreator />} />
               <Route path="/servicio/:id" element={<ProtectedRoute />}>
