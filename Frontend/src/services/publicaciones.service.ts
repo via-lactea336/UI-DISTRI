@@ -55,6 +55,16 @@ export const publicacionesService = {
     return response.data;
   },
 
+  async getPublicacionesByTrabajadorId(
+    trabajadorId: number,
+    page: number = 0
+  ): Promise<PublicacionResponse> {
+    const response = await api.get<PublicacionResponse>(
+      `/publicaciones?trabajadorId=${trabajadorId}&page=${page}`
+    );
+    return response.data;
+  },
+
   async createPublicacion(
     data: Omit<Publicacion, "publicacionId">
   ): Promise<Publicacion> {

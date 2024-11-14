@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { publicacionesService } from "../services/publicaciones.service";
 import { calificacionesService } from "../services/calificaciones.service";
@@ -21,10 +21,20 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const location = useLocation();
+  const prevLocationSearch = useRef(location.search);
   const publicacionId = useParams().id;
 
   useEffect(() => {
-    fetchServicios();
+    if (location.search !== prevLocationSearch.current) {
+      prevLocationSearch.current = location.search;
+      fetchServicios();
+      console.log("fetchServicios");
+      console.log(publicacionId);
+      console.log(searchQuery);
+      console.log(currentPage);
+      console.log(location.search);
+      console.log(publicacionId);
+    }
   }, [searchQuery, currentPage, location.search, publicacionId]);
 
   const fetchServicios = async () => {
@@ -78,9 +88,6 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
   };
 
   const processPublicaciones = async (data: PublicacionResponse) => {
-    console.log("Publicaciones de la api", data.content);
-    console.log("mis publicaciones", publicaciones);
-
     const publicacionesConCalificacion = await Promise.all(
       data.content.map(async (publicacion) => {
         let calificacion;
@@ -108,11 +115,6 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
 
     // Asegúrate de actualizar el estado con las publicaciones procesadas
     setPublicaciones(publicacionesConCalificacion);
-    console.log(
-      "Estado publicaciones actualizado",
-      publicacionesConCalificacion
-    );
-
     setTotalPages(data.page.totalPages);
   };
 
