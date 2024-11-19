@@ -25,9 +25,9 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
   const publicacionId = useParams().id;
 
   useEffect(() => {
+    fetchServicios();
     if (location.search !== prevLocationSearch.current) {
       prevLocationSearch.current = location.search;
-      fetchServicios();
       console.log("fetchServicios");
       console.log(publicacionId);
       console.log(searchQuery);
@@ -39,6 +39,8 @@ const usePublicaciones = (searchQuery: string, currentPage: number) => {
 
   const fetchServicios = async () => {
     setLoading(true);
+    console.log("Intentando obtener publicaciones");
+
     const params = new URLSearchParams(location.search);
     const nombreCategoria = params.get("nombreCategoria");
     const descripcion = searchQuery || params.get("descripcion");

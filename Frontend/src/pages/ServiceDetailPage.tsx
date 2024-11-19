@@ -7,12 +7,14 @@ import { CalificacionDetalle } from "../types";
 import SkeletonLayout from "../components/SkeletonLayout";
 import Error404Page from "./Error404Page";
 import Pagination from "../components/Pagination";
+import { useAuth } from "../context/AuthContext";
 
 const ServiceDetailPage: React.FC = () => {
   const { uniquePublicacion, setUniquePublicacion, loading, getComentarios } =
     usePublicaciones("", 0);
 
   const [commentLoading, setCommentLoading] = useState(false);
+  const { userResponseDTO } = useAuth();
 
   if (loading) {
     return <SkeletonLayout />;
@@ -65,10 +67,12 @@ const ServiceDetailPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4">
       <ServiceDetails uniquePublicacion={uniquePublicacion} />
-      <CreateCalificacionForm
-        publicacion={uniquePublicacion}
-        onNewCalificacion={onNewCalificacion}
-      />
+      {userResponseDTO.tipoUsuario === "cliente" && (
+        <CreateCalificacionForm
+          publicacion={uniquePublicacion}
+          onNewCalificacion={onNewCalificacion}
+        />
+      )}
       <ServiceComments
         detallesPaginados={uniquePublicacion.calificacion.detallesPaginados}
         commentLoading={commentLoading}
