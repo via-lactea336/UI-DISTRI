@@ -59,12 +59,14 @@ const Header: React.FC = () => {
           >
             Eventos
           </Link>
-          <Link
-            to="/propuestas"
-            className="text-[var(--color-text)] hover:text-[var(--color-secondary)]"
-          >
-            Propuestas
-          </Link>
+          {isAuth && userResponseDTO.tipoUsuario === "trabajador" && (
+            <Link
+              to="/eventos/trabajador"
+              className="text-[var(--color-text)] hover:text-[var(--color-secondary)]"
+            >
+              Eventos por trabajador
+            </Link>
+          )}
           <button
             className="btn-outline"
             onClick={() => (window.location.href = "/publicacion/create")}
